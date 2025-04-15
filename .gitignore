@@ -146,3 +146,4 @@ myplan
 notebooks/delete_conns_from_airbyte.ipynb
 .env.local
 .env
+.cursor/
