@@ -1,0 +1,36 @@
+[
+    {
+        "case_id": "C001",
+        "patient": {
+            "id": "P123",
+            "name": "Laura Mendez",
+            "age": 29,
+            "gender": "female"
+        },
+        "session_date": "2025-04-10",
+        "note": "Patient expressed increased anxiety over the past two weeks due to workload and lack of sleep. Mentioned difficulty focusing and mild chest tension.",
+        "clinician": "Dr. Martin Silva",
+        "tags": [
+            "anxiety",
+            "stress",
+            "focus"
+        ]
+    },
+    {
+        "case_id": "C002",
+        "patient": {
+            "id": "P456",
+            "name": "Carlos Alvarez",
+            "age": 35,
+            "gender": "male"
+        },
+        "session_date": "2025-04-11",
+        "note": "Patient reports significant improvement after starting mindfulness practice. Sleeping better and less reactive to work pressure.",
+        "clinician": "Dr. Ana Reyes",
+        "tags": [
+            "mindfulness",
+            "progress",
+            "sleep"
+        ]
+    }
+]
