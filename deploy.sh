@@ -42,4 +42,6 @@ docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITO
 
 echo "✅ Deployment completed successfully!"
 echo "🔍 Monitor the CloudWatch logs for the ECS task"
-echo "🌐 API Gateway URL: $(cd terraform && terraform output -raw api_gateway_url)"
+API_URL=$(cd terraform && terraform output -raw api_gateway_url)
+echo "🌐 API Gateway URL: ${API_URL}"
+echo "📡 Test the API with: curl -X POST ${API_URL}"
