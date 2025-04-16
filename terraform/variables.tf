@@ -10,3 +10,8 @@ variable "project_name" {
   type        = string
   default     = "docker-aws-pipeline-lab"
 }
+
+variable "s3_bucket_name" {
+  description = "Name of the S3 bucket for processed pipeline data"
+  type        = string
+}

@@ -4,13 +4,18 @@
 set -e
 
 # Source environment variables
-if [ -f .env ]; then
-    echo "📝 Loading environment variables from .env file..."
-    export $(cat .env | grep -v '^#' | xargs)
-else
-    echo "❌ .env file not found!"
-    exit 1
-fi
+source .env
+
+# Update terraform.tfvars with S3 bucket name from .env
+echo "s3_bucket_name = \"$S3_BUCKET\"" > terraform/terraform.tfvars
+
+# Initialize and apply Terraform
+cd terraform
+terraform init
+terraform apply -auto-approve
+
+# Get the API Gateway URL
+API_URL=$(terraform output -raw api_gateway_url)
 
 # Configuration
 AWS_REGION=${AWS_DEFAULT_REGION:-$(aws configure get region)}
@@ -19,13 +24,6 @@ ECR_REPOSITORY="data-pipeline"
 IMAGE_TAG="latest"
 
 echo "🚀 Starting deployment process..."
-
-# Create AWS resources first
-echo "🛠️  Creating AWS resources..."
-cd terraform
-terraform init
-terraform apply -auto-approve
-cd ..
 
 # Build Docker image
 echo "📦 Building Docker image..."
@@ -41,7 +39,5 @@ docker tag ${ECR_REPOSITORY}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION
 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}
 
 echo "✅ Deployment completed successfully!"
-echo "🔍 Monitor the CloudWatch logs for the ECS task"
-API_URL=$(cd terraform && terraform output -raw api_gateway_url)
 echo "🌐 API Gateway URL: ${API_URL}"
 echo "📡 Test the API with: curl -X POST ${API_URL}"

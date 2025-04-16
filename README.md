@@ -145,6 +145,7 @@ pre-commit run --all-files
      ```
      # AWS Configuration
      AWS_DEFAULT_REGION=eu-west-1
+     S3_BUCKET=processed-pipeline-data  # Name of the S3 bucket for processed data
 
      # Optional: Override default values
      # AWS_ACCESS_KEY_ID=your_access_key
@@ -153,6 +154,7 @@ pre-commit run --all-files
      ```
 
    - Note: If you have AWS CLI configured, you don't need to set AWS credentials in the .env file
+   - The S3 bucket name from .env will be automatically used in the Terraform configuration
 
 3. **Make scripts executable**
 
@@ -165,6 +167,7 @@ pre-commit run --all-files
    ./deploy.sh
    ```
    This will:
+   - Update Terraform variables with values from .env
    - Create all AWS resources using Terraform
    - Build and push the Docker image to ECR
    - Output the API Gateway URL

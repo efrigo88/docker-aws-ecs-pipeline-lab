@@ -1,9 +1,10 @@
 """Script to read JSON data and save it to S3."""
 
-import os
 import json
-import boto3
+import os
 from datetime import datetime
+
+import boto3
 
 
 def main():
@@ -17,7 +18,9 @@ def main():
     )
 
     # Get bucket name from environment variable
-    bucket = os.getenv("S3_BUCKET", "processed-pipeline-data")
+    bucket = os.getenv("S3_BUCKET")
+    if bucket is None:
+        raise ValueError("S3_BUCKET environment variable is not set")
 
     # Read JSON data
     with open("data/data.json", "r", encoding="utf-8") as f:
