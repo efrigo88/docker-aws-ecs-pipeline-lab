@@ -22,21 +22,3 @@ variable "task_memory" {
   type        = number
   default     = 2048
 }
-
-variable "min_capacity" {
-  description = "Minimum number of tasks to run"
-  type        = number
-  default     = 1
-}
-
-variable "max_capacity" {
-  description = "Maximum number of tasks to run"
-  type        = number
-  default     = 3
-}
-
-variable "target_cpu_utilization" {
-  description = "Target CPU utilization percentage for auto scaling"
-  type        = number
-  default     = 70
-}
