@@ -37,5 +37,17 @@ cd terraform
 terraform destroy -auto-approve
 cd ..
 
+# Clean up local Terraform state files
+echo "🧹 Cleaning up local Terraform state files..."
+find . -type d -name ".terraform" -exec rm -rf {} +
+find . -type d -name "terraform.tfstate.d" -exec rm -rf {} +
+find . -type f \( \
+    -name ".terraform.lock.hcl" \
+    -o -name ".terraform.tfstate.lock.info" \
+    -o -name "terraform.tfstate.backup" \
+    -o -name "terraform.tfstate" \
+    -o -name "myplan" \
+\) -exec rm -f {} +
+
 echo "✅ Cleanup completed successfully!"
-echo "All AWS resources have been destroyed."
+echo "All AWS resources and local Terraform state files have been destroyed."

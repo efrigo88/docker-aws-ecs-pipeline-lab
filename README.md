@@ -110,6 +110,16 @@ This will:
 - Empty the S3 bucket
 - Delete the ECR repository images
 - Destroy all Terraform resources
+- Clean up local Terraform state files and directories:
+  - `.terraform` directories
+  - `terraform.tfstate.d` directories
+  - `.terraform.lock.hcl` files
+  - `.terraform.tfstate.lock.info` files
+  - `terraform.tfstate.backup` files
+  - `terraform.tfstate` files
+  - `myplan` files
+
+Note: The cleanup script will remove all local Terraform state files. This is useful when you want to start fresh, but be aware that this will require a new `terraform init` when you deploy again.
 
 ## Components Details
 
