@@ -33,10 +33,15 @@ resource "aws_iam_role" "ecs_task_role" {
   })
 }
 
+# Data block to get the ECS task execution role policy ARN
+data "aws_iam_policy" "ecs_task_execution_role_policy" {
+  name = "AmazonECSTaskExecutionRolePolicy"
+}
+
 # IAM Policies
 resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  policy_arn = data.aws_iam_policy.ecs_task_execution_role_policy.arn
 }
 
 resource "aws_iam_policy" "s3_access_policy" {
