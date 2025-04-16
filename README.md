@@ -97,23 +97,32 @@ pre-commit run --all-files
 
 ```
 .
-├── build/                    # Docker build context
-│   ├── Dockerfile           # Container definition
-│   └── etl_script.py        # ETL process implementation
-├── terraform/               # Infrastructure as Code
-│   ├── api.tf              # API Gateway configuration
-│   ├── ecr.tf              # ECR repository
-│   ├── ecs.tf              # ECS cluster and task definition
-│   ├── iam.tf              # IAM roles and policies
-│   ├── lambda.tf           # Lambda function
-│   ├── networking.tf       # VPC and networking
-│   ├── provider.tf         # Terraform provider
+├── src/                    # Source code directory
+│   └── main.py            # Main application code
+├── data/                   # Data directory
+│   └── data.json          # Sample data file
+├── terraform/             # Infrastructure as Code
+│   ├── api.tf             # API Gateway configuration
+│   ├── ecr.tf             # ECR repository
+│   ├── ecs.tf             # ECS cluster and task definition
+│   ├── iam.tf             # IAM roles and policies
+│   ├── lambda.tf          # Lambda function
+│   ├── logs.tf            # CloudWatch logs configuration
+│   ├── networking.tf      # VPC and networking
+│   ├── provider.tf        # Terraform provider
 │   ├── s3.tf              # S3 bucket
-│   └── variables.tf        # Terraform variables
-├── deploy.sh               # Deployment script
-├── destroy-all.sh          # Cleanup script
+│   └── variables.tf       # Terraform variables
+├── .env                   # Environment variables
 ├── .env.example           # Example environment variables
-└── README.md              # This file
+├── .gitignore            # Git ignore rules
+├── .pre-commit-config.yaml # Pre-commit hooks configuration
+├── Dockerfile            # Container definition
+├── LICENSE               # Project license
+├── README.md            # Project documentation
+├── deploy.sh            # Deployment script
+├── destroy-all.sh       # Cleanup script
+├── requirements.txt     # Production dependencies
+└── requirements-dev.txt # Development dependencies
 ```
 
 ## Setup and Deployment
