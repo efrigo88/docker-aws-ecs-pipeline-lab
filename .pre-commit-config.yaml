@@ -21,14 +21,6 @@ repos:
       - id: pylint
         additional_dependencies: [pylint-django]
 
-  - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.87.0
-    hooks:
-      - id: terraform_fmt
-      - id: terraform_docs
-      - id: terraform_tflint
-      - id: terraform_validate
-
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: v3.1.0
     hooks:

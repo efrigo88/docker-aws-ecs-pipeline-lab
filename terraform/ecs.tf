@@ -1,3 +1,12 @@
+# ECS Configuration
+locals {
+  # CPU units for the ECS task (1024 units = 1 vCPU)
+  task_cpu = 1024
+
+  # Memory for the ECS task in MiB
+  task_memory = 2048
+}
+
 # ECS Cluster
 resource "aws_ecs_cluster" "data_pipeline" {
   name = "data-pipeline-cluster"
@@ -8,8 +17,8 @@ resource "aws_ecs_task_definition" "etl_task" {
   family                   = "etl-task"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  cpu                      = var.task_cpu
-  memory                   = var.task_memory
+  cpu                      = local.task_cpu
+  memory                   = local.task_memory
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
