@@ -41,5 +41,5 @@ docker tag ${ECR_REPOSITORY}:${IMAGE_TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION
 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}
 
 echo "✅ Deployment completed successfully!"
-echo "📊 Check the ECS service status in the AWS Console"
 echo "🔍 Monitor the CloudWatch logs for the ECS task"
+echo "🌐 API Gateway URL: $(cd terraform && terraform output -raw api_gateway_url)"
