@@ -20,6 +20,79 @@ The pipeline consists of the following components:
 - Terraform installed
 - AWS account with sufficient permissions
 
+## Development Environment Setup
+
+For contributors who want to work on the project:
+
+1. **Create and activate a Python virtual environment**
+
+   ```bash
+   # Create virtual environment
+   python -m venv .venv
+
+   # Activate virtual environment
+   # On Unix/macOS:
+   source .venv/bin/activate
+   # On Windows:
+   .venv\Scripts\activate
+   ```
+
+2. **Install development dependencies**
+
+   ```bash
+   pip install -r requirements-dev.txt
+   ```
+
+3. **Configure pre-commit hooks**
+
+   ```bash
+   # Install pre-commit
+   pip install pre-commit
+
+   # Install git hooks
+   pre-commit install
+   ```
+
+The development environment includes:
+
+- `black`: Code formatter
+- `pylint`: Code linter
+- `pytest`: Testing framework
+- `pytest-cov`: Test coverage reporting
+
+### Pre-commit Hooks
+
+The project uses pre-commit hooks to maintain code quality. These hooks run automatically before each commit and check:
+
+**Python Code:**
+
+- Code formatting with `black`
+- Linting with `pylint`
+- Test coverage with `pytest-cov`
+
+**Terraform Code:**
+
+- Formatting with `terraform fmt`
+- Documentation with `terraform-docs`
+- Linting with `tflint`
+- Validation with `terraform validate`
+
+**General Checks:**
+
+- Trailing whitespace removal
+- End-of-file fixes
+- YAML validation
+- Large file detection
+- Merge conflict detection
+- Private key detection
+- Markdown, YAML, and JSON formatting with Prettier
+
+To run the hooks manually:
+
+```bash
+pre-commit run --all-files
+```
+
 ## Project Structure
 
 ```
@@ -46,29 +119,34 @@ The pipeline consists of the following components:
 ## Setup and Deployment
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd <repository-directory>
    ```
 
 2. **Set up environment variables**
+
    - Copy the example environment file:
      ```bash
      cp .env.example .env
      ```
    - Edit the `.env` file with your AWS configuration:
+
      ```
      # AWS Configuration
      AWS_DEFAULT_REGION=eu-west-1
-     
+
      # Optional: Override default values
      # AWS_ACCESS_KEY_ID=your_access_key
      # AWS_SECRET_ACCESS_KEY=your_secret_key
      # AWS_SESSION_TOKEN=your_session_token  # If using temporary credentials
      ```
+
    - Note: If you have AWS CLI configured, you don't need to set AWS credentials in the .env file
 
 3. **Make scripts executable**
+
    ```bash
    chmod +x deploy.sh destroy-all.sh
    ```
@@ -86,11 +164,13 @@ The pipeline consists of the following components:
 
 1. **Get the API Gateway URL**
    After deployment, the URL will be displayed in the output. You can also get it with:
+
    ```bash
    cd terraform && terraform output api_gateway_url
    ```
 
 2. **Trigger the ETL process**
+
    ```bash
    curl -X POST <api-gateway-url>
    ```
@@ -103,10 +183,13 @@ The pipeline consists of the following components:
 ## Cleanup
 
 To destroy all resources and clean up:
+
 ```bash
 ./destroy-all.sh
 ```
+
 This will:
+
 - Empty the S3 bucket
 - Delete the ECR repository images
 - Destroy all Terraform resources
@@ -124,28 +207,33 @@ Note: The cleanup script will remove all local Terraform state files. This is us
 ## Components Details
 
 ### API Gateway
+
 - HTTP API endpoint at `/trigger-etl`
 - Accepts POST requests
 - Integrates with Lambda function
 
 ### Lambda Function
+
 - Written in Python
 - Triggers ECS task
 - Handles error cases
 - Logs to CloudWatch
 
 ### ECS Task
+
 - Runs in Fargate mode
 - Containerized ETL process
 - Writes output to S3
 - Runs in private subnets
 
 ### S3 Bucket
+
 - Stores ETL output files
 - JSON format with timestamp
 - Named `processed-pipeline-data`
 
 ### Networking
+
 - VPC with public and private subnets
 - NAT Gateway for private subnet internet access
 - Security groups for ECS tasks
@@ -153,11 +241,13 @@ Note: The cleanup script will remove all local Terraform state files. This is us
 ## Troubleshooting
 
 1. **Lambda not triggering ECS task**
+
    - Check Lambda logs in CloudWatch
    - Verify IAM permissions
    - Check environment variables
 
 2. **ECS task failing**
+
    - Check ECS task logs in CloudWatch
    - Verify container image exists in ECR
    - Check task definition configuration
@@ -191,4 +281,4 @@ Note: The cleanup script will remove all local Terraform state files. This is us
 
 ## License
 
-[Add your license here] 
+[Add your license here]
