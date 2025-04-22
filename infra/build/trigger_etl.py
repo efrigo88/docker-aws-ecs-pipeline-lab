@@ -1,7 +1,8 @@
-import os
 import json
-import boto3
 import logging
+import os
+
+import boto3
 
 # Configure logging
 logger = logging.getLogger()
@@ -10,7 +11,12 @@ logger.setLevel(logging.INFO)
 
 def handler(event, context):
     """Lambda handler to trigger ECS task execution."""
-    logger.info("Received event: %s", json.dumps(event))
+    logger.info(
+        "Received event: %s, Function: %s, Memory: %sMB",
+        json.dumps(event),
+        context.function_name,
+        context.memory_limit_in_mb,
+    )
 
     ecs_client = boto3.client("ecs")
 
@@ -48,11 +54,14 @@ def handler(event, context):
         return {
             "statusCode": 200,
             "body": json.dumps(
-                {"message": "ETL task started successfully", "taskArn": task_arn}
+                {
+                    "message": "ETL task started successfully",
+                    "taskArn": task_arn,
+                }
             ),
         }
 
-    except Exception as e:
+    except (boto3.exceptions.Boto3Error, KeyError) as e:
         logger.error("Failed to start ETL task: %s", str(e))
         return {
             "statusCode": 500,

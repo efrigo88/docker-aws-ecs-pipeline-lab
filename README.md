@@ -19,6 +19,11 @@ The pipeline consists of the following components:
 - Docker installed
 - Terraform installed
 - AWS account with sufficient permissions
+- uv (Python package manager) installed
+  ```bash
+  # On macOS (using Homebrew)
+  brew install uv
+  ```
 
 ## Development Environment Setup
 
@@ -27,8 +32,8 @@ For contributors who want to work on the project:
 1. **Create and activate a Python virtual environment**
 
    ```bash
-   # Create virtual environment
-   python -m venv .venv
+   # Create virtual environment using uv
+   uv venv
 
    # Activate virtual environment
    # On Unix/macOS:
@@ -37,18 +42,19 @@ For contributors who want to work on the project:
    .venv\Scripts\activate
    ```
 
-2. **Install development dependencies**
+2. **Install dependencies**
 
    ```bash
-   pip install -r requirements-dev.txt
+   # Install main dependencies
+   uv pip install .
+
+   # Install development dependencies
+   uv pip install ".[dev]"
    ```
 
 3. **Configure pre-commit hooks**
 
    ```bash
-   # Install pre-commit
-   pip install pre-commit
-
    # Install git hooks
    pre-commit install
    ```
@@ -121,8 +127,7 @@ pre-commit run --all-files
 ├── README.md            # Project documentation
 ├── deploy.sh            # Deployment script
 ├── destroy-all.sh       # Cleanup script
-├── requirements.txt     # Production dependencies
-└── requirements-dev.txt # Development dependencies
+└── pyproject.toml       # Project dependencies and metadata
 ```
 
 ## Setup and Deployment
