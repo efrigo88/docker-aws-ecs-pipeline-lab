@@ -107,7 +107,7 @@ pre-commit run --all-files
 │   └── main.py            # Main application code
 ├── data/                   # Data directory
 │   └── data.json          # Sample data file
-├── terraform/             # Infrastructure as Code
+├── infra/                 # Infrastructure as Code
 │   ├── api.tf             # API Gateway configuration
 │   ├── ecr.tf             # ECR repository
 │   ├── ecs.tf             # ECS cluster and task definition
@@ -118,6 +118,9 @@ pre-commit run --all-files
 │   ├── provider.tf        # Terraform provider
 │   ├── s3.tf              # S3 bucket
 │   └── variables.tf       # Terraform variables
+├── scripts/               # Deployment and management scripts
+│   ├── deploy.sh         # Deployment script
+│   └── destroy-all.sh    # Cleanup script
 ├── .env                   # Environment variables
 ├── .env.example           # Example environment variables
 ├── .gitignore            # Git ignore rules
@@ -125,8 +128,6 @@ pre-commit run --all-files
 ├── Dockerfile            # Container definition
 ├── LICENSE               # Project license
 ├── README.md            # Project documentation
-├── deploy.sh            # Deployment script
-├── destroy-all.sh       # Cleanup script
 └── pyproject.toml       # Project dependencies and metadata
 ```
 
@@ -164,12 +165,12 @@ pre-commit run --all-files
 3. **Make scripts executable**
 
    ```bash
-   chmod +x deploy.sh destroy-all.sh
+   chmod +x scripts/deploy.sh scripts/destroy-all.sh
    ```
 
 4. **Deploy the infrastructure**
    ```bash
-   ./deploy.sh
+   ./scripts/deploy.sh
    ```
    This will:
    - Update Terraform variables with values from .env
@@ -183,7 +184,7 @@ pre-commit run --all-files
    After deployment, the URL will be displayed in the output. You can also get it with:
 
    ```bash
-   cd terraform && terraform output api_gateway_url
+   cd infra && terraform output api_gateway_url
    ```
 
 2. **Trigger the ETL process**
@@ -202,7 +203,7 @@ pre-commit run --all-files
 To destroy all resources and clean up:
 
 ```bash
-./destroy-all.sh
+./scripts/destroy-all.sh
 ```
 
 This will:

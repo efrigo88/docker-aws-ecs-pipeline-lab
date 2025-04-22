@@ -4,9 +4,9 @@
 set -e
 
 # Source environment variables
-if [ -f .env ]; then
+if [ -f ../.env ]; then
     echo "📝 Loading environment variables from .env file..."
-    export $(cat .env | grep -v '^#' | xargs)
+    export $(cat ../.env | grep -v '^#' | xargs)
 else
     echo "❌ .env file not found!"
     exit 1
@@ -33,15 +33,15 @@ aws ecr batch-delete-image \
 
 # Destroy Terraform resources
 echo "💥 Destroying Terraform resources..."
-cd terraform
+cd ../infra
 terraform destroy -auto-approve
-cd ..
+cd ../scripts
 
 # Clean up local Terraform state files
 echo "🧹 Cleaning up local Terraform state files..."
-find . -type d -name ".terraform" -exec rm -rf {} +
-find . -type d -name "terraform.tfstate.d" -exec rm -rf {} +
-find . -type f \( \
+find .. -type d -name ".terraform" -exec rm -rf {} +
+find .. -type d -name "terraform.tfstate.d" -exec rm -rf {} +
+find .. -type f \( \
     -name ".terraform.lock.hcl" \
     -o -name ".terraform.tfstate.lock.info" \
     -o -name "terraform.tfstate.backup" \
