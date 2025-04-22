@@ -19,6 +19,11 @@ The pipeline consists of the following components:
 - Docker installed
 - Terraform installed
 - AWS account with sufficient permissions
+- uv (Python package manager) installed
+  ```bash
+  # On macOS (using Homebrew)
+  brew install uv
+  ```
 
 ## Development Environment Setup
 
@@ -27,8 +32,8 @@ For contributors who want to work on the project:
 1. **Create and activate a Python virtual environment**
 
    ```bash
-   # Create virtual environment
-   python -m venv .venv
+   # Create virtual environment using uv
+   uv venv
 
    # Activate virtual environment
    # On Unix/macOS:
@@ -37,28 +42,38 @@ For contributors who want to work on the project:
    .venv\Scripts\activate
    ```
 
-2. **Install development dependencies**
+2. **Install dependencies**
 
    ```bash
-   pip install -r requirements-dev.txt
+   # Install main dependencies
+   uv pip install .
+
+   # Install development dependencies
+   uv pip install ".[dev]"
    ```
 
 3. **Configure pre-commit hooks**
 
    ```bash
-   # Install pre-commit
-   pip install pre-commit
-
    # Install git hooks
    pre-commit install
+   ```
+
+4. **Set up AWS credentials**
+
+   ```bash
+   # Configure AWS CLI (if not already done)
+   aws configure
    ```
 
 The development environment includes:
 
 - `black`: Code formatter
 - `pylint`: Code linter
-- `pytest`: Testing framework
-- `pytest-cov`: Test coverage reporting
+- `terraform fmt`: Terraform formatter
+- `terraform-docs`: Terraform documentation
+- `tflint`: Terraform linter
+- `prettier`: Markdown, YAML, and JSON formatting
 
 ### Pre-commit Hooks
 
@@ -101,7 +116,7 @@ pre-commit run --all-files
 │   └── main.py            # Main application code
 ├── data/                   # Data directory
 │   └── data.json          # Sample data file
-├── terraform/             # Infrastructure as Code
+├── infra/                 # Infrastructure as Code
 │   ├── api.tf             # API Gateway configuration
 │   ├── ecr.tf             # ECR repository
 │   ├── ecs.tf             # ECS cluster and task definition
@@ -112,6 +127,9 @@ pre-commit run --all-files
 │   ├── provider.tf        # Terraform provider
 │   ├── s3.tf              # S3 bucket
 │   └── variables.tf       # Terraform variables
+├── scripts/               # Deployment and management scripts
+│   ├── deploy.sh         # Deployment script
+│   └── destroy-all.sh    # Cleanup script
 ├── .env                   # Environment variables
 ├── .env.example           # Example environment variables
 ├── .gitignore            # Git ignore rules
@@ -119,10 +137,7 @@ pre-commit run --all-files
 ├── Dockerfile            # Container definition
 ├── LICENSE               # Project license
 ├── README.md            # Project documentation
-├── deploy.sh            # Deployment script
-├── destroy-all.sh       # Cleanup script
-├── requirements.txt     # Production dependencies
-└── requirements-dev.txt # Development dependencies
+└── pyproject.toml       # Project dependencies and metadata
 ```
 
 ## Setup and Deployment
@@ -159,14 +174,23 @@ pre-commit run --all-files
 3. **Make scripts executable**
 
    ```bash
-   chmod +x deploy.sh destroy-all.sh
+   chmod +x scripts/deploy.sh scripts/destroy-all.sh
    ```
 
 4. **Deploy the infrastructure**
+
+   Important: All scripts must be run from the project root directory, not from within the `scripts` folder.
+
    ```bash
-   ./deploy.sh
+   # ✅ Run from project root (correct)
+   ./scripts/deploy.sh
+
+   # ❌ Do not run from scripts directory (incorrect)
+   # cd scripts && ./deploy.sh  # This will fail
    ```
+
    This will:
+
    - Update Terraform variables with values from .env
    - Create all AWS resources using Terraform
    - Build and push the Docker image to ECR
@@ -178,7 +202,7 @@ pre-commit run --all-files
    After deployment, the URL will be displayed in the output. You can also get it with:
 
    ```bash
-   cd terraform && terraform output api_gateway_url
+   cd infra && terraform output api_gateway_url
    ```
 
 2. **Trigger the ETL process**
@@ -197,7 +221,7 @@ pre-commit run --all-files
 To destroy all resources and clean up:
 
 ```bash
-./destroy-all.sh
+./scripts/destroy-all.sh
 ```
 
 This will:
@@ -254,20 +278,42 @@ Note: The cleanup script will remove all local Terraform state files. This is us
 
 1. **Lambda not triggering ECS task**
 
-   - Check Lambda logs in CloudWatch
-   - Verify IAM permissions
-   - Check environment variables
+   - Check Lambda logs in CloudWatch: `/aws/lambda/trigger-etl`
+   - Verify IAM permissions for Lambda execution role
+   - Check environment variables in Lambda configuration
+   - Ensure ECS task definition exists and is active
+   - Verify VPC configuration and subnet IDs
 
 2. **ECS task failing**
 
-   - Check ECS task logs in CloudWatch
-   - Verify container image exists in ECR
+   - Check ECS task logs in CloudWatch: `/ecs/etl-task`
+   - Verify container image exists in ECR and is accessible
    - Check task definition configuration
+   - Verify container health checks
+   - Check network connectivity in private subnets
+   - Review ECS task execution role permissions
 
 3. **S3 upload issues**
-   - Verify IAM permissions
+
+   - Verify IAM permissions for ECS task role
    - Check S3 bucket policy
    - Verify network connectivity
+   - Check S3 bucket encryption settings
+   - Verify bucket lifecycle policies
+
+4. **API Gateway issues**
+
+   - Check API Gateway logs in CloudWatch
+   - Verify Lambda integration settings
+   - Check API Gateway permissions
+   - Verify CORS configuration if applicable
+
+5. **Terraform deployment issues**
+   - Check Terraform state file
+   - Verify AWS credentials and permissions
+   - Review Terraform plan output
+   - Check for resource naming conflicts
+   - Verify region and availability zone settings
 
 ## Security Considerations
 
@@ -293,4 +339,4 @@ Note: The cleanup script will remove all local Terraform state files. This is us
 
 ## License
 
-[Add your license here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

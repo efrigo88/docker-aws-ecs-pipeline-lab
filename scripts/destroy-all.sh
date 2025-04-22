@@ -33,9 +33,9 @@ aws ecr batch-delete-image \
 
 # Destroy Terraform resources
 echo "💥 Destroying Terraform resources..."
-cd terraform
+cd infra
 terraform destroy -auto-approve
-cd ..
+cd ../scripts
 
 # Clean up local Terraform state files
 echo "🧹 Cleaning up local Terraform state files..."

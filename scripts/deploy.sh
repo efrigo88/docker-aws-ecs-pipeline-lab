@@ -7,10 +7,10 @@ set -e
 source .env
 
 # Update terraform.tfvars with S3 bucket name from .env
-echo "s3_bucket_name = \"$S3_BUCKET\"" > terraform/terraform.tfvars
+echo "s3_bucket_name = \"$S3_BUCKET\"" > infra/terraform.tfvars
 
 # Initialize and apply Terraform
-cd terraform
+cd infra
 terraform init
 terraform apply -auto-approve
 
@@ -27,6 +27,7 @@ echo "🚀 Starting deployment process..."
 
 # Build Docker image
 echo "📦 Building Docker image..."
+cd ..
 docker buildx build --platform linux/amd64 -t ${ECR_REPOSITORY}:${IMAGE_TAG} .
 
 # Login to ECR
