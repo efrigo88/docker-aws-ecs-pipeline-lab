@@ -59,12 +59,21 @@ For contributors who want to work on the project:
    pre-commit install
    ```
 
+4. **Set up AWS credentials**
+
+   ```bash
+   # Configure AWS CLI (if not already done)
+   aws configure
+   ```
+
 The development environment includes:
 
 - `black`: Code formatter
 - `pylint`: Code linter
-- `pytest`: Testing framework
-- `pytest-cov`: Test coverage reporting
+- `terraform fmt`: Terraform formatter
+- `terraform-docs`: Terraform documentation
+- `tflint`: Terraform linter
+- `prettier`: Markdown, YAML, and JSON formatting
 
 ### Pre-commit Hooks
 
@@ -169,10 +178,19 @@ pre-commit run --all-files
    ```
 
 4. **Deploy the infrastructure**
+
+   Important: All scripts must be run from the project root directory, not from within the `scripts` folder.
+
    ```bash
+   # ✅ Run from project root (correct)
    ./scripts/deploy.sh
+
+   # ❌ Do not run from scripts directory (incorrect)
+   # cd scripts && ./deploy.sh  # This will fail
    ```
+
    This will:
+
    - Update Terraform variables with values from .env
    - Create all AWS resources using Terraform
    - Build and push the Docker image to ECR
@@ -260,20 +278,42 @@ Note: The cleanup script will remove all local Terraform state files. This is us
 
 1. **Lambda not triggering ECS task**
 
-   - Check Lambda logs in CloudWatch
-   - Verify IAM permissions
-   - Check environment variables
+   - Check Lambda logs in CloudWatch: `/aws/lambda/trigger-etl`
+   - Verify IAM permissions for Lambda execution role
+   - Check environment variables in Lambda configuration
+   - Ensure ECS task definition exists and is active
+   - Verify VPC configuration and subnet IDs
 
 2. **ECS task failing**
 
-   - Check ECS task logs in CloudWatch
-   - Verify container image exists in ECR
+   - Check ECS task logs in CloudWatch: `/ecs/etl-task`
+   - Verify container image exists in ECR and is accessible
    - Check task definition configuration
+   - Verify container health checks
+   - Check network connectivity in private subnets
+   - Review ECS task execution role permissions
 
 3. **S3 upload issues**
-   - Verify IAM permissions
+
+   - Verify IAM permissions for ECS task role
    - Check S3 bucket policy
    - Verify network connectivity
+   - Check S3 bucket encryption settings
+   - Verify bucket lifecycle policies
+
+4. **API Gateway issues**
+
+   - Check API Gateway logs in CloudWatch
+   - Verify Lambda integration settings
+   - Check API Gateway permissions
+   - Verify CORS configuration if applicable
+
+5. **Terraform deployment issues**
+   - Check Terraform state file
+   - Verify AWS credentials and permissions
+   - Review Terraform plan output
+   - Check for resource naming conflicts
+   - Verify region and availability zone settings
 
 ## Security Considerations
 
@@ -299,4 +339,4 @@ Note: The cleanup script will remove all local Terraform state files. This is us
 
 ## License
 
-[Add your license here]
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

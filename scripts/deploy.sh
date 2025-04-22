@@ -4,13 +4,13 @@
 set -e
 
 # Source environment variables
-source ../.env
+source .env
 
 # Update terraform.tfvars with S3 bucket name from .env
-echo "s3_bucket_name = \"$S3_BUCKET\"" > ../infra/terraform.tfvars
+echo "s3_bucket_name = \"$S3_BUCKET\"" > infra/terraform.tfvars
 
 # Initialize and apply Terraform
-cd ../infra
+cd infra
 terraform init
 terraform apply -auto-approve
 
