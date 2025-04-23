@@ -1,41 +1,54 @@
-"""Script to read JSON data and save it to S3."""
-
-import json
 import os
-from datetime import datetime
 
-import boto3
+from sentence_transformers import SentenceTransformer
+
+from .helpers import (
+    get_s3_client,
+    prepare_json_data,
+    save_to_s3,
+    get_chroma_client,
+    get_collection,
+    parse_pdf,
+    get_text_content,
+    get_chunks,
+    get_ids,
+    get_metadata,
+    run_queries,
+)
 
 
-def main():
-    """Main entry point."""
-    # Initialize S3 client
-    s3 = boto3.client(
-        "s3",
-        aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
-        region_name=os.getenv("AWS_DEFAULT_REGION"),
-    )
+def main() -> None:
+    """Main function to process PDF, store in ChromaDB, and run queries."""
+    s3 = get_s3_client()
 
     # Get bucket name from environment variable
     bucket = os.getenv("S3_BUCKET")
     if bucket is None:
         raise ValueError("S3_BUCKET environment variable is not set")
 
-    # Read JSON data
-    with open("data/data.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
+    doc = parse_pdf()
+    text_content = get_text_content(doc)
 
-    # Save to S3
-    key = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-    s3.put_object(
-        Bucket=bucket,
-        Key=key,
-        Body=json.dumps(data, indent=2),
-        ContentType="application/json",
+    chunks = get_chunks(text_content)
+    ids = get_ids(chunks)
+    metadatas = get_metadata(chunks, doc)
+
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+    embeddings = model.encode(chunks).tolist()
+
+    client = get_chroma_client()
+    collection = get_collection(client)
+
+    data = prepare_json_data(chunks, ids, metadatas)
+    save_to_s3(s3, data, bucket)
+
+    collection.add(
+        ids=ids, documents=chunks, metadatas=metadatas, embeddings=embeddings
     )
+    print(f"✅ Stored {len(chunks)} chunks in ChromaDB.")
 
-    print(f"Successfully wrote clinical notes to s3://{bucket}/{key}")
+    run_queries(collection, model)
+    print("✅ Done!")
 
 
 if __name__ == "__main__":

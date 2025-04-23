@@ -115,3 +115,45 @@ resource "aws_iam_role_policy" "lambda_run_task_policy" {
     ]
   })
 }
+
+# IAM Role for EC2 Instance
+resource "aws_iam_role" "chroma_instance_role" {
+  name = "chroma-instance-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# IAM Policy for EC2 Instance
+resource "aws_iam_role_policy" "chroma_instance_policy" {
+  name = "chroma-instance-policy"
+  role = aws_iam_role.chroma_instance_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject"
+        ]
+        Effect   = "Allow"
+        Resource = "${aws_s3_bucket.scripts.arn}/*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_instance_profile" "chroma_instance_profile" {
+  name = "chroma-instance-profile"
+  role = aws_iam_role.chroma_instance_role.name
+}

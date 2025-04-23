@@ -35,6 +35,14 @@ resource "aws_ecs_task_definition" "etl_task" {
         {
           name  = "S3_BUCKET"
           value = aws_s3_bucket.processed-pipeline-data.id
+        },
+        {
+          name  = "CHROMA_HOST"
+          value = aws_instance.chroma_db.private_ip
+        },
+        {
+          name  = "CHROMA_PORT"
+          value = "8000"
         }
       ]
       logConfiguration = {
