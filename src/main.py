@@ -21,7 +21,6 @@ def main() -> None:
     """Main function to process PDF, store in ChromaDB, and run queries."""
     s3 = get_s3_client()
 
-    # Get bucket name from environment variable
     bucket = os.getenv("S3_BUCKET")
     if bucket is None:
         raise ValueError("S3_BUCKET environment variable is not set")
