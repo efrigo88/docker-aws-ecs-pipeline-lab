@@ -26,9 +26,10 @@ resource "aws_instance" "chroma_db" {
   user_data = <<-EOF
               #!/bin/bash
               # Download init script from S3
-              aws s3 cp s3://${aws_s3_bucket.scripts.id}/init-chroma.sh /tmp/init-chroma.sh
-              chmod +x /tmp/init-chroma.sh
-              /tmp/init-chroma.sh
+              aws s3 cp s3://${aws_s3_bucket.scripts.id}/init-script.sh /tmp/init-script.sh
+              chmod +x /tmp/init-script.sh
+              cd /tmp
+              ./init-script.sh
               EOF
 
   tags = {

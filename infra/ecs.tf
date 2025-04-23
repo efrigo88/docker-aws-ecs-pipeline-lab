@@ -1,10 +1,10 @@
 # ECS Configuration
 locals {
-  # CPU units for the ECS task (1024 units = 1 vCPU)
-  task_cpu = 1024
+  # CPU units for the ECS task (4096 units = 4 vCPU)
+  task_cpu = 4096
 
   # Memory for the ECS task in MiB
-  task_memory = 2048
+  task_memory = 8192
 }
 
 # ECS Cluster

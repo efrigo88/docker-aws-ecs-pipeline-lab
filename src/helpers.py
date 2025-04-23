@@ -55,8 +55,8 @@ def save_to_s3(s3_client: boto3.client, data: list[dict], bucket: str):
 def get_chroma_client() -> chromadb.HttpClient:
     """Initialize and return a ChromaDB HTTP client."""
     return chromadb.HttpClient(
-        host="chroma",
-        port=8000,
+        host=os.getenv("CHROMA_HOST", "chroma"),
+        port=int(os.getenv("CHROMA_PORT", "8000")),
         settings=Settings(allow_reset=True, anonymized_telemetry=False),
     )
 
@@ -96,7 +96,7 @@ def get_chunks(
     chunks = []
     for text in text_content:
         for i in range(0, len(text), chunk_size):
-            chunk = text[i:i + chunk_size].strip()
+            chunk = text[i : i + chunk_size].strip()
             if chunk:
                 chunks.append(chunk)
     if not chunks:
